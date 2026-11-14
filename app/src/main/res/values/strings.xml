@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ইসলামিক কুইজ</string>
+    <!-- Google AdMob Test App ID (প্রোডাকশনে প্রকাশের আগে আপনার আসল AdMob App ID বসান) -->
+    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+</resources>

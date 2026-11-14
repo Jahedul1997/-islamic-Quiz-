@@ -1,0 +1,6 @@
+{
+  "name": "ইসলামিক কুইজ (Islamic Quiz)",
+  "description": "সম্পূর্ণ বাংলা ভাষার ইসলামিক কুইজ ও ইবাদত অ্যাপ — ১০০০টি কুইজ প্রশ্ন, ৩০ পারা আল-কুরআন, ৩০+ দোয়া, ডিজিটাল তাসবিহ, ৫ ওয়াক্ত নামাজের সময়সূচি ও আজান এবং ইংরেজি-বাংলা-হিজরি ক্যালেন্ডার।",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
