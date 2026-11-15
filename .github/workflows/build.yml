@@ -18,23 +18,30 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4
 
-    - name: Build Debug APK
-      run: ./gradlew assembleDebug
-
-    - name: Build Release AAB
-      run: ./gradlew bundleRelease
+    - name: Build APK and AAB
+      run: |
+        GRADLEW_PATH=$(find . -name "gradlew" -print -quit)
+        if [ -z "$GRADLEW_PATH" ]; then
+          echo "Error: gradlew file not found anywhere in the repository!"
+          exit 1
+        fi
+        PROJECT_DIR=$(dirname "$GRADLEW_PATH")
+        echo "Found project at: $PROJECT_DIR"
+        cd "$PROJECT_DIR"
+        chmod +x gradlew
+        ./gradlew assembleDebug bundleRelease
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: app-debug-apk
-        path: app/build/outputs/apk/debug/*.apk
+        path: "**/build/outputs/apk/debug/*.apk"
 
     - name: Upload AAB
       uses: actions/upload-artifact@v4
       with:
         name: app-release-aab
-        path: app/build/outputs/bundle/release/*.aab
+        path: "**/build/outputs/bundle/release/*.aab"
