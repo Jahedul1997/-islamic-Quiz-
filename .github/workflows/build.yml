@@ -27,11 +27,9 @@ jobs:
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
-                   - name: Decode Keystore
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-        run: |
-          echo "$KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > my-upload-key.jks   - name: Build Release AAB
+          echo "$KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > my-upload-key.jks
+
+      - name: Build Release AAB
         env:
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
