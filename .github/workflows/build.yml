@@ -21,19 +21,16 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v4
 
+    - name: Generate Debug Keystore
+      run: |
+        keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+
     - name: Build APK and AAB
       run: |
         BUILD_GRADLE=$(find . -name "build.gradle*" -not -path "*/app/*" -print -quit)
-        if [ -z "$BUILD_GRADLE" ]; then
-          echo "Error: No Android project (build.gradle) found!"
-          ls -la
-          exit 1
-        fi
         PROJECT_DIR=$(dirname "$BUILD_GRADLE")
-        echo "Found Android project at: $PROJECT_DIR"
         cd "$PROJECT_DIR"
         if [ ! -f "gradlew" ]; then
-          echo "gradlew missing, generating wrapper..."
           gradle wrapper
         fi
         chmod +x gradlew
