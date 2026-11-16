@@ -1,49 +1,21 @@
-name: Build Android APK and AAB
+name: Generate Release Keystore
 
 on:
-  push:
-    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
-  build:
+  generate:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
+      - name: Generate Keystore and Base64
+        run: |
+          keytool -genkey -v -keystore release.keystore -storepass IslamicQuiz2026 -alias islamicquiz -keypass IslamicQuiz2026 -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=IslamicQuiz,O=Developer,C=BD"
+          base64 -w 0 release.keystore > keystore_base64.txt
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
-
-    - name: Generate Debug Keystore
-      run: |
-        keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
-
-    - name: Build APK and AAB
-      run: |
-        BUILD_GRADLE=$(find . -name "build.gradle*" -not -path "*/app/*" -print -quit)
-        PROJECT_DIR=$(dirname "$BUILD_GRADLE")
-        cd "$PROJECT_DIR"
-        if [ ! -f "gradlew" ]; then
-          gradle wrapper
-        fi
-        chmod +x gradlew
-        ./gradlew assembleDebug bundleDebug
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-debug-apk
-        path: "**/build/outputs/apk/debug/*.apk"
-
-    - name: Upload AAB
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-debug-aab
-        path: "**/build/outputs/bundle/debug/*.aab"
+      - name: Upload Keystore Files
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-release-keystore
+          path: |
+            release.keystore
+            keystore_base64.txt
