@@ -34,7 +34,7 @@ jobs:
           gradle wrapper
         fi
         chmod +x gradlew
-        ./gradlew assembleDebug bundleRelease
+        ./gradlew assembleDebug bundleDebug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
@@ -45,5 +45,5 @@ jobs:
     - name: Upload AAB
       uses: actions/upload-artifact@v4
       with:
-        name: app-release-aab
-        path: "**/build/outputs/bundle/release/*.aab"
+        name: app-debug-aab
+        path: "**/build/outputs/bundle/debug/*.aab"
