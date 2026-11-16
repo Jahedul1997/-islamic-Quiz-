@@ -23,14 +23,19 @@ jobs:
 
     - name: Build APK and AAB
       run: |
-        GRADLEW_PATH=$(find . -name "gradlew" -print -quit)
-        if [ -z "$GRADLEW_PATH" ]; then
-          echo "Error: gradlew file not found anywhere in the repository!"
+        BUILD_GRADLE=$(find . -name "build.gradle*" -not -path "*/app/*" -print -quit)
+        if [ -z "$BUILD_GRADLE" ]; then
+          echo "Error: No Android project (build.gradle) found!"
+          ls -la
           exit 1
         fi
-        PROJECT_DIR=$(dirname "$GRADLEW_PATH")
-        echo "Found project at: $PROJECT_DIR"
+        PROJECT_DIR=$(dirname "$BUILD_GRADLE")
+        echo "Found Android project at: $PROJECT_DIR"
         cd "$PROJECT_DIR"
+        if [ ! -f "gradlew" ]; then
+          echo "gradlew missing, generating wrapper..."
+          gradle wrapper
+        fi
         chmod +x gradlew
         ./gradlew assembleDebug bundleRelease
 
