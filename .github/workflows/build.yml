@@ -1,42 +1,21 @@
-name: Build Signed Release AAB
+name: Generate Keystore and Base64
 
 on:
-  push:
-    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
-  build:
+  generate:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '9.9.1'
-
-      - name: Decode Keystore
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+      - name: Generate Keystore and Base64
         run: |
-          echo "$KEYSTORE_BASE64" | tr -d '[:space:]' | base64 --decode > my-upload-key.jks
+          keytool -genkey -v -keystore my-upload-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias my-key-alias -storepass 123456 -keypass 123456 -dname "CN=Jahedul, OU=Dev, O=IslamicQuiz, L=Chattogram, S=Chattogram, C=BD"
+          base64 -w 0 my-upload-key.jks > keystore_base64.txt
 
-      - name: Build Release AAB
-        env:
-          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: gradle bundleRelease
-
-      - name: Upload Release AAB
+      - name: Upload Files
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-aab
-          path: app/build/outputs/bundle/release/app-release.aab
+          name: keystore-bundle
+          path: |
+            my-upload-key.jks
+            keystore_base64.txt
